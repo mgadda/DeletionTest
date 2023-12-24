@@ -21,8 +21,9 @@ struct ContentView: View {
             List {
                 ForEach(items) { item in
                     NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
+                      DetailView(item: item)
                     } label: {
+                      // A preview of the item
                         Text(item.timestamp!, formatter: itemFormatter)
                     }
                 }
@@ -70,6 +71,27 @@ struct ContentView: View {
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
+        }
+    }
+}
+
+struct DetailView: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @ObservedObject var item: Item
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        VStack {
+          Text("Item at \(item.timestamp!, formatter: itemFormatter)")
+          Button("Delete") {
+            dismiss()
+              viewContext.delete(item)
+              do {
+                  try viewContext.save()
+              } catch {
+                  print("Error saving context: \(error)")
+              }
+          }
         }
     }
 }
