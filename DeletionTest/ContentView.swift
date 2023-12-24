@@ -85,8 +85,10 @@ struct DetailView: View {
       Text("Item at \(item.timestamp!, formatter: itemFormatter)")
       Button("Delete") {
         dismiss()
-        viewContext.delete(item)
-        
+        // Defer deletion until have DetailView has been popped from the view stack
+        DispatchQueue.main.async {
+          viewContext.delete(item)
+        }
         do {
             try viewContext.save()
         } catch {
