@@ -17,30 +17,33 @@ struct ContentView: View {
   private var items: FetchedResults<Item>
 
   var body: some View {
-    NavigationStack {
-      List {
-        ForEach(items) { item in
-          NavigationLink {
-            DetailView(item: item)
-          } label: {
-            // A preview of the item
-            Text(item.timestamp!, formatter: itemFormatter)
+    NavigationSplitView(
+      sidebar: {
+        List {
+          ForEach(items) { item in
+            NavigationLink {
+              DetailView(item: item)
+            } label: {
+              // A preview of the item
+              Text(item.timestamp!, formatter: itemFormatter)
+            }
           }
+          .onDelete(perform: deleteItems)
         }
-        .onDelete(perform: deleteItems)
-      }
-      .toolbar {
-        ToolbarItem(placement: .navigationBarTrailing) {
-          EditButton()
-        }
-        ToolbarItem {
-          Button(action: addItem) {
+        .toolbar {
+          ToolbarItem(placement: .navigationBarTrailing) {
+            EditButton()
+          }
+          ToolbarItem {
+            Button(action: addItem) {
               Label("Add Item", systemImage: "plus")
+            }
           }
         }
+      }, detail: {
+        Text("Select an item")
       }
-      Text("Select an item")
-    }
+    )
   }
 
   private func addItem() {
